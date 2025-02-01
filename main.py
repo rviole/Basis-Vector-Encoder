@@ -2,6 +2,7 @@ import os
 import json
 from tools import Vector
 from typing import List, Literal
+import numpy as np
 
 MESSAGE_PADDING = 50  # default
 PADDING_SYMBOL = -1
@@ -17,23 +18,16 @@ if env_value:
 
 SYMBOL_MAPPING_PATH = "symbol_mapping.json"
 
-# make a padding function
-# figure our what each function should return (types)
 with open(SYMBOL_MAPPING_PATH) as file:
     SYMBOL_MAPPING = json.load(file)
-
-
-def decode(encoded_message, basis):
-    pass
 
 
 message = (
     "Hello World, you are douchebad. HOw are you doing. How have you been. Im batman"
 )
-import numpy as np
 
 
-def pad_symbol(symbol: str, padding_symbol, dimensions: int) -> List:
+def pad_encoded_symbol(symbol: str, padding_symbol, dimensions: int) -> List:
     return [symbol] + [padding_symbol] * (dimensions - 1)
 
 
@@ -49,8 +43,7 @@ def message_to_vectors(
         encoded_symbol = mapping.get(symbol, padding_symbol)
 
         # pad the encoded symbol to n components (add n-1 because we already have 1 component)
-        padded_symbol = pad_symbol(
-            
+        padded_symbol = pad_encoded_symbol(
             symbol=encoded_symbol, padding_symbol=padding_symbol, dimensions=dimensions
         )
 
@@ -77,5 +70,46 @@ def vectors_to_message(vectors: List[Vector], mapping=SYMBOL_MAPPING) -> str:
 
 enc_msg = message_to_vectors(message, 2)
 dec_msg = vectors_to_message(enc_msg)
-print(enc_msg)
-print(dec_msg)
+# print(enc_msg)
+# print(dec_msg)
+
+# Example #1
+# Basis vectors of Jennifer
+# Jenifer_bc = np.array([[1, 0], [0, 1]])
+
+# Basis vectors of John in Jennifer's basis
+# John_bc = np.array([[1, 1], [1, -1]])
+
+# John's basis vectors represent a transformation to Jennifer's basis vectors
+# Any vector in John's basis can be represented in Jennifer's basis using the transformation matrix [[1, 1], [1, -1]]
+# it acts like a language translator between John and Jennifer's basis vectors (coordinate system)
+
+# Example #2 - Practice
+
+jenifer_str_message = "Hello Mike. This is my secret message. I hope you can decrypt it. Good luck!"
+jenifer_vector_message = message_to_vectors(jenifer_str_message, 2)
+
+
+jennifer_to_mike_transformation = np.array([[1, 1], [1, -1]])
+
+jenifer_message_in_mike_basis = [jennifer_to_mike_transformation @ m for m in jenifer_vector_message]
+
+
+# Now we finished with translating the message from Jennifer's basis to Mike's basis
+# Now the Mike will decrypt the message using the inverse of the transformation matrix (just like inverse language translator)
+# in other words, he will do reverse enginnering to get the original message, by using the ivnerse of the transformation matrix.
+
+mike_to_jennifer_transformation = np.linalg.inv(jennifer_to_mike_transformation)
+jenifer_message_in_jennifer_basis = [mike_to_jennifer_transformation @ m for m in jenifer_message_in_mike_basis]
+
+
+print("Jennifer's original message: ", jenifer_str_message)
+print("Jennifer's vectorized message in her basis: ", f"{jenifer_vector_message[:5]}...")
+
+print("Jennifer's vectorized message in Mike's basis: ", f"{jenifer_message_in_mike_basis[:5]}...")
+print("Mike's vectorized message in Jennifer's basis: ", f"{jenifer_message_in_jennifer_basis[:5]}...")
+
+
+
+
+
