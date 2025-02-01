@@ -15,3 +15,12 @@ While this project doesn't have much practical use, it serves as a portfolio pie
 
 ⚠️ Optimization Disclaimer
 - "The code is intentionally not optimized for speed or compactness. The primary goal of this project is to clearly demonstrate the underlying mathema tical concepts and provide a detailed, step-by-step walkthrough of how basis change and linear transformations work. I prioritized readability and intuition over performance, as this project serves as a showcase of my understanding of these topics rather than a high-performance implementation."
+
+🚦Limitations:
+Only 1D/2D/3D basis vectors allowed - no zero or higher than 3D.
+
+
+
+Rememeber to include
+- each symbol is 1 Vector
+- we pad Vectors (with PADIDNG SYMBOL = -1) only to allign shapes with basis vectors. 
