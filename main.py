@@ -31,12 +31,25 @@ def pad_encoded_symbol(symbol: str, padding_symbol, dimensions: int) -> List:
     return [symbol] + [padding_symbol] * (dimensions - 1)
 
 
+def is_square(matrix) -> bool:
+    matrix = np.array(matrix)
+    return matrix.shape[0] == matrix.shape[1]
+
+
 def message_to_vectors(
     message: str,
-    dimensions: Literal[1, 2, 3],
+    basis: np.ndarray = None,
     mapping: dict = SYMBOL_MAPPING,
     padding_symbol=PADDING_SYMBOL,
-):
+):  
+    if not isinstance(basis, np.ndarray):
+        basis = np.array(basis) 
+        print(basis)
+    if not is_square(basis):
+        raise ValueError("Basis matrix must be square matrix")
+    
+    dimensions = basis.shape[0]
+
     def encode_symbol_to_vector(
         symbol: str, mapping=mapping, padding_symbol=padding_symbol
     ):
@@ -54,8 +67,11 @@ def message_to_vectors(
     sentences = message.lower().strip()
     symbols = list(sentences)
     vectors = [encode_symbol_to_vector(symbol) for symbol in symbols]
+    
+    # now lets transform vectors to basis 
+    vectors_in_basis = [basis @ v for v in vectors]
 
-    return vectors
+    return vectors_in_basis
 
 
 def vectors_to_message(vectors: List[Vector], mapping=SYMBOL_MAPPING) -> str:
@@ -67,11 +83,6 @@ def vectors_to_message(vectors: List[Vector], mapping=SYMBOL_MAPPING) -> str:
     decoded_symbols = [decode_vector_to_symbol(vector) for vector in vectors]
     return "".join(decoded_symbols)
 
-
-enc_msg = message_to_vectors(message, 2)
-dec_msg = vectors_to_message(enc_msg)
-# print(enc_msg)
-# print(dec_msg)
 
 # Example #1
 # Basis vectors of Jennifer
@@ -86,30 +97,60 @@ dec_msg = vectors_to_message(enc_msg)
 
 # Example #2 - Practice
 
-jenifer_str_message = "Hello Mike. This is my secret message. I hope you can decrypt it. Good luck!"
-jenifer_vector_message = message_to_vectors(jenifer_str_message, 2)
+str_message = (
+    "Hello Mike. This is my secret message. I hope you can decrypt it. Good luck!"
+)
+jenifer_basis_in_jennifer_basis = np.array([[1, 0], [0, 1]])
+jenifer_basis_message = message_to_vectors(str_message, basis=jenifer_basis_in_jennifer_basis)
 
+transformation_jenifer_to_mike_basis = np.array([[1, 1], [1, -1]])
 
-jennifer_to_mike_transformation = np.array([[1, 1], [1, -1]])
+# Now we need to make a composition to:
+# 1. Translate the message to vectors in std basis
+# 2. Translate the message to vectors in Jennifer's basis
+# 3. Translate the Jennifer's basis vectors to Mike's basis vectors
 
-jenifer_message_in_mike_basis = [jennifer_to_mike_transformation @ m for m in jenifer_vector_message]
+# Why we use composition of jenifers basis and transformation matrix?
+# Because the vectorized message is in std basis. TO show that this message originates from Jenifer, we need to translate it to Jenifer's basis
+# Then we use transformation matrix to translate it to Mike's basis
+# So overall it is a composition of two transformations
+# And to decrypt the message, we need to do the inverse of the composition
+jenifer_message_in_mike_basis = [transformation_jenifer_to_mike_basis @ m for m in jenifer_basis_message]
+
+# Now we need to decrypt the message using the inverse of the composite transformation matrix
 
 
 # Now we finished with translating the message from Jennifer's basis to Mike's basis
-# Now the Mike will decrypt the message using the inverse of the transformation matrix (just like inverse language translator)
+# Now the Mike will decrypt the message using the inverse of the composite transformation matrix (just like inverse language translator)
 # in other words, he will do reverse enginnering to get the original message, by using the ivnerse of the transformation matrix.
 
-mike_to_jennifer_transformation = np.linalg.inv(jennifer_to_mike_transformation)
-jenifer_message_in_jennifer_basis = [mike_to_jennifer_transformation @ m for m in jenifer_message_in_mike_basis]
+
+# inverse composition
+transformation_mike_to_jenifer_basis = np.linalg.inv(transformation_jenifer_to_mike_basis)
+
+# decrpyted message in Jennifer's basis (basically using reverse engineering)
+jenifer_message_in_jennifer_basis = [
+    transformation_mike_to_jenifer_basis @ m for m in jenifer_message_in_mike_basis
+]
 
 
-print("Jennifer's original message: ", jenifer_str_message)
-print("Jennifer's vectorized message in her basis: ", f"{jenifer_vector_message[:5]}...")
+decrypte_message = vectors_to_message(jenifer_message_in_jennifer_basis)
 
-print("Jennifer's vectorized message in Mike's basis: ", f"{jenifer_message_in_mike_basis[:5]}...")
-print("Mike's vectorized message in Jennifer's basis: ", f"{jenifer_message_in_jennifer_basis[:5]}...")
+print("Jennifer's original message: ", str_message)
+print(
+    "Jennifer's vectorized message in her basis: ",
+    f"{jenifer_basis_in_jennifer_basis[:5]}...\n",
+)
+
+print(
+    "Jennifer's vectorized message in Mike's basis: ",
+    f"{jenifer_message_in_mike_basis[:5]}...\n",
+)
+
+print(
+    "Mike's vectorized message in Jennifer's basis: ",
+    f"{jenifer_message_in_jennifer_basis[:5]}...\n",
+)
 
 
-
-
-
+print("Decrypted message: ", decrypte_message)
