@@ -1,6 +1,6 @@
 import numpy as np
 from typing import List
-from tools import Vector, map_string, is_square_matrix, is_basis, validate_input
+from tools import Vector, map_string, is_basis, validate_input
 import json
 
 with open("symbol_mapping.json", "r") as f:
@@ -13,6 +13,8 @@ raw_message: str = "Hello DImon, i am batman"
 def encrypt(
     raw_message: str, symbol_mapping: dict, basis=np.array([[1, 0], [0, 1]])
 ) -> List[Vector]:
+    validate_input(raw_message, symbol_mapping, basis)
+    
     if not isinstance(basis, np.ndarray):
         basis = np.array(basis)
     if not is_basis(basis):
@@ -45,13 +47,15 @@ def encrypt(
 
 
 def decrypt(
-    encrypted_message: List[Vector], basis_representation, symbol_mapping: dict
+    encrypted_message: List[Vector], basis, symbol_mapping: dict
 ) -> str:
-    if not is_basis(basis_representation):
+    validate_input(encrypted_message, basis, symbol_mapping)
+    
+    if not is_basis(basis):
         raise ValueError("The basis is not a basis matrix. Probably dependent vectors.")
 
     try:
-        inverse_trans_matrix = np.linalg.inv(basis_representation)
+        inverse_trans_matrix = np.linalg.inv(basis)
     except np.linalg.LinAlgError:
         raise ValueError("The transformation matrix is not invertible.")
 
@@ -80,7 +84,7 @@ ecnrypted_message = encrypt(
 )
 decrypted_message = decrypt(
     encrypted_message=ecnrypted_message,
-    basis_representation=jenifer_to_mike_transformation,
+    basis=jenifer_to_mike_transformation,
     symbol_mapping=symbol_mapping,
 )
 
