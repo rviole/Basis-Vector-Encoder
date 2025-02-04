@@ -1,137 +1,88 @@
-import json
 import numpy as np
-from tools import Vector
-from typing import List, Literal
+from typing import List
+from tools import Vector, map_string, is_square_matrix, is_basis, validate_input
+import json
+
+with open("symbol_mapping.json", "r") as f:
+    symbol_mapping = json.load(f)
 
 
-# Load symbol mapping json file
-SYMBOL_MAPPING_PATH = "./symbol_mapping.json"
-with open(SYMBOL_MAPPING_PATH) as file:
-    SYMBOL_MAPPING = json.load(file)
+raw_message: str = "Hello DImon, i am batman"
 
 
-def _vectorize_message_std(message: str, symbol_mapping) -> List[Vector]:
-    """
-    Converts a message to a list of vectors using the standard basis.
+def encrypt(
+    raw_message: str, symbol_mapping: dict, basis=np.array([[1, 0], [0, 1]])
+) -> List[Vector]:
+    if not isinstance(basis, np.ndarray):
+        basis = np.array(basis)
+    if not is_basis(basis):
+        raise ValueError("The basis is not a basis matrix. Probably dependent vectors.")
+    basis_components = basis.shape[0]
 
-    Args:
-        message (str): The message to be vectorized.
-        symbol_mapping (dict): The mapping from symbols to vectors.
+    # Transform the message to lower case and remove leading and trailing whitespaces
+    preprocessed_message = raw_message.lower().strip()
 
-    Returns:
-        List[Vector]: The vectorized message.
-    """
-    message = message.strip().lower()
-    symbols = list(message)
+    # Map each character to the corresponding mapping value
+    mapped_message = map_string(preprocessed_message, symbol_mapping=symbol_mapping)
+    # Pad each symbol to allign shape with basis vectors
 
-    mapped_symbols = [
-        symbol_mapping.get(symbol, symbol_mapping[" "]) for symbol in symbols
+    # for example
+    # basis_components = 2
+    # mapped_message = [1, 2, 3]
+    # padded_message = [[1, 0], [2, 0], [3, 0]]
+    padded_message = [
+        [c] + [symbol_mapping.get("PAD", 0)] * (basis_components - 1)
+        for c in mapped_message
     ]
 
-    vectors = [Vector(s) for s in mapped_symbols]
-    return vectors
+    vectorized_message = [Vector(p) for p in padded_message]
+
+    transformed_message = [
+        Vector(np.dot(basis, vector)) for vector in vectorized_message
+    ]
+
+    return transformed_message
 
 
-def _stringify_vectors_std(vectors: List[Vector], symbol_mapping) -> str:
-    """
-    Converts a list of vectors back to a string using the standard basis.
+def decrypt(
+    encrypted_message: List[Vector], basis_representation, symbol_mapping: dict
+) -> str:
+    if not is_basis(basis_representation):
+        raise ValueError("The basis is not a basis matrix. Probably dependent vectors.")
 
-    Args:
-        vectors (List[Vector]): The list of vectors to be converted.
-        symbol_mapping (dict): The mapping from vectors to symbols.
+    try:
+        inverse_trans_matrix = np.linalg.inv(basis_representation)
+    except np.linalg.LinAlgError:
+        raise ValueError("The transformation matrix is not invertible.")
 
-    Returns:
-        str: The resulting string.
-    """
-    reversed_mapping = {v: k for k, v in symbol_mapping.items()}
-    symbols = [reversed_mapping[vector[0]] for vector in vectors]
-    return "".join(symbols)
+    reverse_symbol_mapping = {v: k for k, v in symbol_mapping.items()}
+    std_vectorized_message = [
+        np.dot(inverse_trans_matrix, vector) for vector in encrypted_message
+    ]
 
+    decrypted_message = "".join(
+        [
+            reverse_symbol_mapping.get(vector[0], "UNK")
+            for vector in std_vectorized_message
+        ]
+    )
 
-message: str = "Hello World"
-vectorized_out = _vectorize_message_std(message, symbol_mapping=SYMBOL_MAPPING)
-stringified_out = _stringify_vectors_std(vectorized_out, symbol_mapping=SYMBOL_MAPPING)
-print(vectorized_out)
-print(stringified_out)
-
-
-
-def pad_vectors_std(vectors: List[Vector], padding_symbol, length: int) -> List[Vector]:
-    """
-    Pads a list of vectors to a specified length.
-
-    Args:
-        vectors (List[Vector]): The list of vectors to be padded.
-        padding_vector (Vector): The vector to be used for padding.
-        length (int): The desired length of the padded list.
-
-    Returns:
-        List[Vector]: The padded list of vectors.
-    """
-    padded_vectors = [v+[padding_symbol] * (length - 1) for v in vectors]
-    return padded_vectors
+    return decrypted_message
 
 
-def encrypt_message(
-    message: str,
-    symbol_mapping,
-    basis=None,
-):
-    """
-    Applies a basis change to a message.
+# Transformation matrix from Jenifer to Mike
+jenifer_to_mike_transformation = np.array([[1, 1], [1, -1]])
 
-    Args:
-        message (str): The message to be transformed.
-        basis (np.ndarray): The basis matrix to be applied.
-        symbol_mapping (dict): The mapping from symbols to vectors.
+ecnrypted_message = encrypt(
+    raw_message=raw_message,
+    basis=jenifer_to_mike_transformation,
+    symbol_mapping=symbol_mapping,
+)
+decrypted_message = decrypt(
+    encrypted_message=ecnrypted_message,
+    basis_representation=jenifer_to_mike_transformation,
+    symbol_mapping=symbol_mapping,
+)
 
-    Returns:
-        List[Vector]: The transformed message.
-    """
-    vectors = _vectorize_message_std(message, symbol_mapping)
-    
-    vector_length = basis.shape[0]
-    
-    padded_vectors = pad_vectors_std(vectors, -1, vector_length)
-    print(padded_vectors)
-
-    transformed_vectors = [basis @ v for v in padded_vectors]
-
-    return transformed_vectors
-
-
-def decrypt_message(vectors, basis, symbol_mapping):
-    """
-    Applies the inverse basis change to a list of vectors.
-
-    Args:
-        vectors (List[Vector]): The list of vectors to be transformed.
-        basis (np.ndarray): The basis matrix to be applied.
-        symbol_mapping (dict): The mapping from vectors to symbols.
-
-    Returns:
-        str: The transformed message.
-    """
-    inverse_basis = np.linalg.inv(basis)
-    transformed_vectors = [inverse_basis @ v for v in vectors]
-    str_message = _stringify_vectors_std(transformed_vectors, symbol_mapping)
-    return str_message
-
-
-message = "Hello Lia, how are you?"
-
-jenifer_basis = np.array([[1, 0], [0, 1]])
-transformation = np.array([[1, 1], [1, -1]])
-
-
-enc_out = encrypt_message(message, symbol_mapping=SYMBOL_MAPPING, basis=transformation)
-
-dec_out = decrypt_message(enc_out, basis=transformation, symbol_mapping=SYMBOL_MAPPING)
-
-
-print(enc_out)
-print(dec_out)
-
-# add square matrix validation
-# add default basis
-# add padding
+print("Encrypted message:", ecnrypted_message[:3], "...")
+print("Decrypted message:", decrypted_message)
