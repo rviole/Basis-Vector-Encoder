@@ -10,7 +10,7 @@ with open(SYMBOL_MAPPING_PATH) as file:
     SYMBOL_MAPPING = json.load(file)
 
 
-def vectorize_message_std(message: str, symbol_mapping) -> List[Vector]:
+def _vectorize_message_std(message: str, symbol_mapping) -> List[Vector]:
     """
     Converts a message to a list of vectors using the standard basis.
 
@@ -32,7 +32,7 @@ def vectorize_message_std(message: str, symbol_mapping) -> List[Vector]:
     return vectors
 
 
-def stringify_vectors_std(vectors: List[Vector], symbol_mapping) -> str:
+def _stringify_vectors_std(vectors: List[Vector], symbol_mapping) -> str:
     """
     Converts a list of vectors back to a string using the standard basis.
 
@@ -49,14 +49,35 @@ def stringify_vectors_std(vectors: List[Vector], symbol_mapping) -> str:
 
 
 message: str = "Hello World"
-vectorized_out = vectorize_message_std(message, symbol_mapping=SYMBOL_MAPPING)
-stringified_out = stringify_vectors_std(vectorized_out, symbol_mapping=SYMBOL_MAPPING)
+vectorized_out = _vectorize_message_std(message, symbol_mapping=SYMBOL_MAPPING)
+stringified_out = _stringify_vectors_std(vectorized_out, symbol_mapping=SYMBOL_MAPPING)
 print(vectorized_out)
 print(stringified_out)
 
 
-def encrypt_message(message:str, symbol_mapping, basis=None, ):
-    """ 
+
+def pad_vectors_std(vectors: List[Vector], padding_symbol, length: int) -> List[Vector]:
+    """
+    Pads a list of vectors to a specified length.
+
+    Args:
+        vectors (List[Vector]): The list of vectors to be padded.
+        padding_vector (Vector): The vector to be used for padding.
+        length (int): The desired length of the padded list.
+
+    Returns:
+        List[Vector]: The padded list of vectors.
+    """
+    padded_vectors = [v+[padding_symbol] * (length - 1) for v in vectors]
+    return padded_vectors
+
+
+def encrypt_message(
+    message: str,
+    symbol_mapping,
+    basis=None,
+):
+    """
     Applies a basis change to a message.
 
     Args:
@@ -67,14 +88,20 @@ def encrypt_message(message:str, symbol_mapping, basis=None, ):
     Returns:
         List[Vector]: The transformed message.
     """
-    vectors = vectorize_message_std(message, symbol_mapping)
+    vectors = _vectorize_message_std(message, symbol_mapping)
+    
+    vector_length = basis.shape[0]
+    
+    padded_vectors = pad_vectors_std(vectors, -1, vector_length)
+    print(padded_vectors)
 
-    transformed_vectors = [basis @ v for v in vectors]
+    transformed_vectors = [basis @ v for v in padded_vectors]
 
     return transformed_vectors
 
+
 def decrypt_message(vectors, basis, symbol_mapping):
-    """ 
+    """
     Applies the inverse basis change to a list of vectors.
 
     Args:
@@ -87,8 +114,24 @@ def decrypt_message(vectors, basis, symbol_mapping):
     """
     inverse_basis = np.linalg.inv(basis)
     transformed_vectors = [inverse_basis @ v for v in vectors]
-    return stringify_vectors_std(transformed_vectors, symbol_mapping)
+    str_message = _stringify_vectors_std(transformed_vectors, symbol_mapping)
+    return str_message
 
 
+message = "Hello Lia, how are you?"
 
-# add square matrix validation  
+jenifer_basis = np.array([[1, 0], [0, 1]])
+transformation = np.array([[1, 1], [1, -1]])
+
+
+enc_out = encrypt_message(message, symbol_mapping=SYMBOL_MAPPING, basis=transformation)
+
+dec_out = decrypt_message(enc_out, basis=transformation, symbol_mapping=SYMBOL_MAPPING)
+
+
+print(enc_out)
+print(dec_out)
+
+# add square matrix validation
+# add default basis
+# add padding
