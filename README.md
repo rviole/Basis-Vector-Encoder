@@ -1,4 +1,4 @@
-# Basis-Vector-Encoding
+# 🧮 Basis-Vector-Encoding
 <!-- # 🚧🏗️ In Progress... -->
 <br>
 
@@ -13,6 +13,18 @@ Demonstrates mastery of
 ⚠️ Prioritizes mathematical clarity over practicality  
 ⚠️ Intentional unoptimized implementation **to showcase step-by-step logic and enhance code clarity**  
 ⚠️ Serves as skills exhibit for technical interviews  
+
+---
+
+### **✨ Key Concepts Demonstrated**  
+| **Concept**               | **Implementation Example**                      |  
+|---------------------------|-------------------------------------------------|  
+| Basis Change               | Messages encoded/decoded using transformation matrices |  
+| Inverse Transformations    | Decoding via matrix inversion of basis changes  |  
+
+---
+
+
 
 <br>
 
@@ -32,10 +44,14 @@ Disclaimer: This project is intentionally non-practical and serves as a learning
 3. Explanation of symbol_mapping.json
 
 
-## 📙Files
-- `main.py`
-- `tools.py`
-- `symbols_mapping.json`
+
+## **📂 Project Structure**  
+| File                     | Purpose                                  |  
+|--------------------------|------------------------------------------|  
+| `main.py`                | Core encoding/decoding logic            |  
+| `tools.py`               | Vector class & transformation utilities |  
+| `symbol_mapping.json`    | Maps 69+ symbols to ℝⁿ coordinates      |  
+
 
 ## Workflow
 
