@@ -7,7 +7,7 @@ with open("symbol_mapping.json", "r") as f:
     symbol_mapping = json.load(f)
 
 
-raw_message: str = "Hello DImon, i am batman"
+raw_message: str = "Hey, Mike! How are you doing?"
 
 
 def encrypt(
