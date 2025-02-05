@@ -1,26 +1,31 @@
 # Basis-Vector-Encoding
-
-### 📚Type:  **Portfolio-Project** 💼
-```
-This is a Portfolio Project
-This project encodes and decodes messages using basis vectors.
-```
-<img src="./Disclaimer.png">
-
-
-
 <!-- # 🚧🏗️ In Progress... -->
 
+## **🔍 Portfolio Project Showcase**  
+*This is a conceptual demonstration, not production-ready code.*  
+
+**Purpose:**  
+Demonstrates mastery of  
+`basis vectors` • `linear transformations` • `coordinate system conversions`  
+
+**Key Notes:**  
+⚠️ Prioritizes mathematical clarity over practicality  
+⚠️ Intentional unoptimized implementation  
+⚠️ Serves as skills exhibit for technical interviews  
+
+---
 
 
-This project encodes and decodes messages using basis vectors. In simple terms, think of it as a way of transforming a message into a different 'language'—where each set of basis vectors represents a specific perspective or coordinate system. To decode the message, you need to have the appropriate 'translation'—the corresponding basis vectors from that same 'language.' 
+This project encodes and decodes messages using basis vectors. 
+In simple terms, think of it as a way of transforming a message into a different 'language'—where each set of basis vectors represents a specific perspective or coordinate system. To decode the message, you need to have the appropriate 'translation'—the corresponding basis vectors from that same 'language.' 
 
 While this project doesn't have much practical use, it serves as a portfolio piece to demonstrate my understanding of basis change, linear transformations, and mathematical concepts.
 
 
 # 🛠️ Usage
 
-1. Disclaimer about non-practicality
+Disclaimer: This project is intentionally non-practical and serves as a learning tool.
+
 2. Explanation of main.py
 3. Explanation of symbol_mapping.json
 
