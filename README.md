@@ -22,7 +22,6 @@ Demonstrates mastery of
 | Basis Change               | Messages encoded/decoded using transformation matrices |  
 | Inverse Transformations    | Decoding via matrix inversion of basis changes  |  
 
----
 
 
 
