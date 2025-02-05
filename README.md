@@ -5,24 +5,22 @@
 ## **🔍 Portfolio Project Showcase**  
 *This is a conceptual demonstration, not production-ready code.*  
 
-**Purpose:**  
-Demonstrates mastery of  
-`basis vectors` • `linear transformations` • `coordinate system conversions`  
+
+### **✨ Key Concepts Demonstrated**  
+| **Concept**               | **Implementation Example**                      |  
+|---------------------------|-------------------------------------------------|  
+| **Basis Vectors**          | Custom basis matrices define new coordinate systems for message projection |  
+| **Coordinate System Conversion** | Messages transformed between standard basis ↔ arbitrary basis spaces |  
+| **Linear Transformation** | Matrix operations applied to vectors during encoding/decoding |  
+| **Basis Change**           | Messages re-encoded using transformation matrices between systems |  
+| **Inverse Transformations**| Message recovery through matrix inversion operations |  
+
+<br>
 
 **Key Notes:**  
 ⚠️ Prioritizes mathematical clarity over practicality  
 ⚠️ Intentional unoptimized implementation **to showcase step-by-step logic and enhance code clarity**  
 ⚠️ Serves as skills exhibit for technical interviews  
-
-<br>
-
-### **✨ Key Concepts Demonstrated**  
-| **Concept**               | **Implementation Example**                      |  
-|---------------------------|-------------------------------------------------|  
-| Basis Change               | Messages encoded/decoded using transformation matrices |  
-| Inverse Transformations    | Decoding via matrix inversion of basis changes  |  
-
-
 
 
 <br>
