@@ -1,11 +1,9 @@
 # Basis-Vector-Encoding
 <!-- # 🚧🏗️ In Progress... -->
-
-<div style="background:darkblue; padding: 5px 10px; border-radius:10px">
+<br>
 
 ## **🔍 Portfolio Project Showcase**  
 *This is a conceptual demonstration, not production-ready code.*  
-
 
 **Purpose:**  
 Demonstrates mastery of  
@@ -13,11 +11,10 @@ Demonstrates mastery of
 
 **Key Notes:**  
 ⚠️ Prioritizes mathematical clarity over practicality  
-⚠️ Intentional unoptimized implementation  
+⚠️ Intentional unoptimized implementation **to showcase step-by-step logic and enhance code clarity**  
 ⚠️ Serves as skills exhibit for technical interviews  
 
-</div>
-
+<br>
 
 ## Description
 
