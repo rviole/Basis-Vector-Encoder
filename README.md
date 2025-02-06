@@ -1,7 +1,8 @@
 # 🧮 Basis-Vector-Encoding
+This project demonstrates encoding and decoding messages using basis vectors
+
 <br>
 
-This project demonstrates encoding and decoding messages using basis vectors
 
 ## **🔍 Portfolio Project Showcase**  
 *This is a conceptual demonstration, not production-ready code.*  
