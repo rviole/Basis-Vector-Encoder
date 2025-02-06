@@ -85,11 +85,3 @@ Additional Notes:
 
 - In this implementation, each symbol in the string corresponds to a single vector.
 - Vector() class is a simple overlay  of np.ndarray with just a simple shape manipulation and clarity in names
-
-
-Rememeber to include
-- we pad Vectors (with PADIDNG SYMBOL = -1) only to allign shapes with basis vectors. 
-
-
-🚦Limitations:
-Only 1D/2D/3D basis vectors allowed - no zero or higher than 3D.
