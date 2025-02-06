@@ -38,7 +38,7 @@ While this project doesn't have much practical use, it serves as a portfolio pie
 |--------------------------|------------------------------------------|  
 | `main.py`                | Core encoding/decoding logic            |  
 | `tools.py`               | Vector class & transformation utilities |  
-| `symbol_mapping.json`    | Maps 69+ symbols to ℝⁿ coordinates      |  
+| `symbol_mapping.json`    | Maps 95+ symbols to ℝⁿ coordinates      |  
 
 ## 🛠️ Usage
 
