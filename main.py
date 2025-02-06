@@ -25,7 +25,7 @@ def encrypt(
         List[Vector]: A list of transformed vectors representing the encrypted message.
     """
     validate_input(raw_message, symbol_mapping, basis)
-    
+
     if not isinstance(basis, np.ndarray):
         basis = np.array(basis)
     if not is_basis(basis):
@@ -60,21 +60,23 @@ def encrypt(
 
 
 def decrypt(
-    encrypted_message: List[Vector], basis, symbol_mapping: dict
+    encrypted_message: List[Vector],
+    symbol_mapping: dict,
+    basis,
 ) -> str:
     """
     Decrypts an encrypted message using a specified basis matrix and symbol mapping.
 
     Args:
         encrypted_message (List[Vector]): The encrypted message represented as a list of vectors.
-        basis (np.ndarray): The basis matrix used for the inverse transformation.
         symbol_mapping (dict): A dictionary mapping symbols to their corresponding vector representations.
+        basis (np.ndarray): The basis matrix used for the inverse transformation.
 
     Returns:
         str: The decrypted message as a string.
     """
     validate_input(encrypted_message, basis, symbol_mapping)
-    
+
     if not is_basis(basis):
         raise ValueError("The basis is not a basis matrix. Probably dependent vectors.")
 
@@ -83,15 +85,13 @@ def decrypt(
     except np.linalg.LinAlgError:
         raise ValueError("The transformation matrix is not invertible.")
 
-    
     # Use this to map the vectors back to symbols
-    reverse_symbol_mapping = {v: k for k, v in symbol_mapping.items()} 
-    
-    
+    reverse_symbol_mapping = {v: k for k, v in symbol_mapping.items()}
+
     # After inverse transformation we get the standard basis vectors (padded and in std basis)
     std_vectorized_message = [
         np.dot(inverse_trans_matrix, vector) for vector in encrypted_message
-    ] 
+    ]
 
     # Extract the first element of each vector and map it to a symbol (other elements are padding)
     decrypted_message = "".join(
@@ -99,7 +99,7 @@ def decrypt(
             reverse_symbol_mapping.get(vector[0], "UNK")
             for vector in std_vectorized_message
         ]
-    ) 
+    )
 
     return decrypted_message
 
@@ -115,8 +115,8 @@ ecnrypted_message = encrypt(
 )
 decrypted_message = decrypt(
     encrypted_message=ecnrypted_message,
-    basis=jenifer_to_mike_transformation,
     symbol_mapping=symbol_mapping,
+    basis=jenifer_to_mike_transformation,
 )
 
 print("Encrypted message:", ecnrypted_message[:3], "...")

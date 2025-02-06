@@ -27,10 +27,14 @@
 
 ## **📖 Description**
 
-This project encodes and decodes messages using basis vectors. 
-In simple terms, think of it as a way of transforming a message into a different 'language'—where each set of basis vectors represents a specific perspective or coordinate system. To decode the message, you need to have the appropriate 'translation'—the corresponding basis vectors from that same 'language.' 
+This project demonstrates encoding and decoding messages using basis vectors. 
+In simple terms, it transforms a message into a different 'language' where each set of basis vectors represents a specific perspective or coordinate system. To decode the message, you need the appropriate 'translation' - the corresponding basis vectors from that same 'language.' 
 
-While this project doesn't have much practical use, it serves as a portfolio piece to demonstrate my understanding of basis change, linear transformations, and mathematical concepts.
+The project involves:
+1. Mapping each symbol in a message to a vector using a predefined symbol mapping.
+2. Encoding the message by transforming these vectors using a custom basis matrix.
+3. Decoding the message by applying the inverse transformation to retrieve the original vectors and mapping them back to symbols.
+
 
 
 ## **📂 Project Structure**  
@@ -42,15 +46,39 @@ While this project doesn't have much practical use, it serves as a portfolio pie
 
 ## 🛠️ Usage
 
-Disclaimer: This project is intentionally non-practical and serves as a learning tool.
+Disclaimer: This project is intentionally non-practical and serves as a showcase.
 
-2. Explanation of main.py
-3. Explanation of symbol_mapping.json
+To use this project, follow these steps:
+
+1. **Prepare the Symbol Mapping:**
+   Ensure `symbol_mapping.json` contains the mappings for all symbols you want to encode.
+
+2. **Encrypt a Message:**
+   Use the `encrypt` function from `main.py` to encode a message. Provide the raw message, symbol mapping, and a basis matrix.
+   ```python
+   from main import encrypt
+   import numpy as np
+   import json
+
+   with open("symbol_mapping.json", "r") as f:
+       symbol_mapping = json.load(f)
+
+   raw_message = "Hello, World!"
+   basis_matrix = np.array([[1, 1], [1, -1]])
+   encrypted_message = encrypt(raw_message, symbol_mapping, basis_matrix)
+   ```
+
+3. **Decrypt a Message:**
+   Use the `decrypt` function from `main.py` to decode the message. Provide the encrypted message, the same basis matrix, and the symbol mapping.
+   ```python
+   from main import decrypt
+
+   decrypted_message = decrypt(encrypted_message, symbol_mapping, basis_matrix)
+   print("Decrypted message:", decrypted_message)
+   ```
 
 
-
-
-## Workflow
+## 🔧 Workflow
 
 So, how the code works? Here is a step by step explanation.
 
