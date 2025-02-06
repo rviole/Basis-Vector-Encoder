@@ -1,5 +1,5 @@
 # 🧮 Basis-Vector-Encoding
-This project demonstrates encoding and decoding messages using basis vectors
+This project demonstrates encoding and decoding messages using basis vectors.
 
 <br>
 
